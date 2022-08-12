@@ -46,12 +46,11 @@ void Receiver::_readEvent(std::vector<EventInfo*>& event_list,
 }
 
 // Interface
-std::vector<EventInfo*> Receiver::listen() {
+void Receiver::listen(std::vector<EventInfo*>& event_list) {
   struct kevent active_event[MAX_EVENT];
   int           invoked =
       kevent(_kq, NULL, 0, active_event, MAX_EVENT, &_wait);  // ERROR CHECK
 
-  std::vector<EventInfo*> event_list;
   for (int i = 0; i < invoked; ++i) {
     int        event      = active_event[i].filter;
     int        flags      = active_event[i].flags;

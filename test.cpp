@@ -4,26 +4,21 @@
 
 int main()
 {
+    std::string str = "apple        banana     \r\n\r\nhello";
     std::stringstream ss;
-    char buf[10];
-    bzero(buf, 10);
 
-    buf[0] = '1';
+    ss << str;
+  
+    std::cout << "str :"<<str << std::endl;
 
-    ss << buf;
+    std::getline(ss, str);
+    std::cout << "line 1 : "<<str << ss.eof() << std::endl;
+    
+    std::getline(ss, str);
+    std::cout << "line 2 : "<<str << ss.eof() << (str.c_str()[0] == '\r') << std::endl;
+    std::getline(ss, str);
+    std::cout << "line 3 : "<<str << ss.eof() << std::endl;
+    std::getline(ss, str);
+    std::cout << "line 4 : "<<str << ss.eof() << std::endl;
 
-    bzero(buf, 10);
-
-    buf[0] = '2';
-
-    ss << buf;
-
-    std::string out;
-    while (!ss.eof()){
-        ss >> out;
-        std::cout << "out :" << out << " , first :" << out.c_str()[0] << std::endl;
-    }
-    out = "";
-    ss >>out;
-    std::cout << "out :" << out << " , first :" << out.c_str()[0] << std::endl;
 }

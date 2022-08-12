@@ -1,9 +1,10 @@
 SERVER_NAME = server.out
+CLIENT_NAME = client.out
 
 SRC_DIR = ./src
 INC_DIR = ./inc
 OBJ_DIR = ./obj
-SERVER_DIR = server
+SERVER_DIR = Server
 
 SERVER_SRC = server_main.cpp Receiver.cpp Sender.cpp
 SERVER_OBJ = $(addprefix $(OBJ_DIR)/, $(SERVER_SRC:.cpp=.o))
@@ -33,6 +34,11 @@ server: $(SERVER_NAME)
 
 $(SERVER_NAME): $(SERVER_OBJ)
 	$(CXX) $(SERVER_OBJ) $(LDFLAGS) -o $@
+
+client: $(CLIENT_NAME)
+
+$(CLIENT_NAME): $(SRC_DIR)/Client/Client.cpp
+	$(CXX) $< -o $@ $(INC_DIRS)
 
 $(OBJ_DIR)/%.o : %.cpp 
 	$(CXX) -c $< -o $@ $(INC_DIRS) $(CXXFLAGS)

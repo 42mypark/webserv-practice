@@ -5,5 +5,4 @@ AlignConsecutiveDeclarations: true
 AlignConsecutiveAssignments: true
 AllowShortLoopsOnASingleLine: false
 AllowShortIfStatementsOnASingleLine: false
-ColumnLimit: 80
----
+ColumnLimit: 100

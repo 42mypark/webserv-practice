@@ -33,7 +33,7 @@ class Receiver {
 
     // Interface
     public:
-        std::vector<EventInfo *> listen();
+        void listen(std::vector<EventInfo *>& event_list);
 };
 
 

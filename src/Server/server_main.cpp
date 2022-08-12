@@ -39,11 +39,13 @@ int main(int argc, char **argv) {
   }
   std::cout << "Server: listening.." << std::endl;
 
-  Receiver                 r(kq, listen_fd, &hrp);
-  Sender                   s(kq);
-  std::vector<EventInfo *> v;
+  Receiver                 receiver(kq, listen_fd, &hrp);
+  Sender                   sender(kq);
+  std::vector<EventInfo *> event_list; // iter -> free
+  std::vector<ResponseMaterial *> material_list; // iter -> free
+  std::vector<HttpResponse *> response_list; // iter -> free
   while (1) {
-    v = r.listen();
-    s.sendClient(v);
+    receiver.listen(event_list);
+    sender.sendClient(event_list);
   }
 }
