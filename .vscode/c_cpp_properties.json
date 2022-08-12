@@ -4,7 +4,12 @@
             "name": "Linux",
             "includePath": [
                 "${workspaceFolder}/**",
-                "~/libkqueue/include"
+                "${workspaceFolder}/**/**",
+                "${workspaceFolder}/src/server/Parser",
+                "${workspaceFolder}/src/server/Receiver",
+                "${workspaceFolder}/src/server/Sender",
+                "${workspaceFolder}/inc",
+                "${workspaceFolder}/inc/DataStructure"
             ],
             "defines": [],
             "compilerPath": "/usr/bin/gcc",
