@@ -1,8 +1,18 @@
 #if !defined(ResponseGenerator_hpp)
 #define ResponseGenerator_hpp
 
-class ResponseGenerator {};
+#include <vector>
 
+class EventInfo;
 
-#endif // ResponseGenerator
+class ResponseGenerator {
+  // Constructor
+ public:
+  ResponseGenerator() {}
+  // Interface
+ public:
+  void         response(std::vector<EventInfo*>& event_info);
+  virtual void response(EventInfo& event_info) {}
+};
 
+#endif  // ResponseGenerator

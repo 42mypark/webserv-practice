@@ -1,7 +1,14 @@
 #if !defined(CgiToHttpTransformer_hpp)
 #define CgiToHttpTransformer_hpp
 
-class CgiToHttpTransformer : public ResponseGenerator {};
+#include "ResponseGenerator.hpp"
 
+class EventInfo;
 
-#endif // CgiToHttpTransformer
+class CgiToHttpTransformer : public ResponseGenerator {
+  // Interface
+ public:
+  void response(EventInfo& event_info);
+};
+
+#endif  // CgiToHttpTransformer

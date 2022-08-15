@@ -1,29 +1,40 @@
 #if !defined(Sender_hpp)
 #define Sender_hpp
 
+#include <fcntl.h>
+#include <netinet/in.h>
 #include <sys/event.h>
 #include <sys/socket.h>
-#include <netinet/in.h>
-#include <cstring>
-#include <sstream>
-#include <iostream>
-#include <vector>
-#include "HttpRequestParser.hpp"
-#include "EventInfo.hpp"
 #include <unistd.h>
 
-class Sender{
-    private:
-        int _kq;
+#include <cstring>
+#include <iostream>
+#include <sstream>
+#include <vector>
 
-    // Constructor
-    public:
-        Sender(int kq) : _kq(kq) {}
-    
-    // Interface
-    public:
-        void sendClient(std::vector<EventInfo *>& event_list);
+#include "CgiResponseParser.hpp"
+#include "CgiToHttpTransformer.hpp"
+#include "EventInfo.hpp"
+
+class Sender {
+ private:
+  int                   _kq;
+  CgiResponseParser*    _crp;
+  CgiToHttpTransformer* _ctht;
+
+  // Constructor
+ public:
+  Sender(int kq, CgiResponseParser* crp, CgiToHttpTransformer* ctht) : _kq(kq), _crp(crp), _ctht(ctht) {}
+
+  // Method
+ private:
+  void _registerEvent(int to_fd, int from_fd);
+  void _deleteEvent(EventInfo& event_info);
+
+  // Interface
+ public:
+  void sendClient(std::vector<EventInfo*>& event_list);
+  void callCgi(EventInfo& event_info);
 };
 
-#endif // Sender_hpp
-
+#endif  // Sender_hpp

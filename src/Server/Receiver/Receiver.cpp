@@ -1,8 +1,8 @@
 #include "Receiver.hpp"
 
 // Constructor
-Receiver::Receiver(int kq, int listen_fd, HttpRequestParser* hrp)
-    : _kq(kq), _listen_fd(listen_fd), _hrp(hrp) {
+Receiver::Receiver(int kq, int listen_fd, HttpRequestParser* hrp, HttpResponseGenerator* hrg)
+    : _kq(kq), _listen_fd(listen_fd), _hrp(hrp), _hrg(hrg) {
   _wait.tv_sec  = WAITMS / 1000;
   _wait.tv_nsec = (WAITMS % 1000) * 1000 * 1000;
 }
@@ -15,7 +15,7 @@ void Receiver::_acceptEvent() {
 
   int client_fd = accept(_listen_fd, SOCKADDR(client_addr), &addr_len);  // ERROR CHECK
   fcntl(client_fd, F_SETFL, O_NONBLOCK);
-  EventInfo*    event_info = new EventInfo(client_fd, client_fd, _hrp);
+  EventInfo*    event_info = new EventInfo(client_fd, client_fd, _hrp, _hrg);
   struct kevent ev;
   EV_SET(&ev, client_fd, EVFILT_READ, EV_ADD, 0, 0, event_info);
   kevent(_kq, &ev, 1, NULL, 0, NULL);  // ERROR CHECK
@@ -63,5 +63,5 @@ void Receiver::listen(std::vector<EventInfo*>& event_list) {
       }
     }
   }
-  return event_list;
+  return;
 }

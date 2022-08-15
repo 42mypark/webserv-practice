@@ -2,7 +2,12 @@
 #define HttpResponseGenerator_hpp
 #include "ResponseGenerator.hpp"
 
-class HttpResponseGenerator : public ResponseGenerator {};
+class EventInfo;
 
+class HttpResponseGenerator : public ResponseGenerator {
+  // Interface
+ public:
+  void response(EventInfo& event_info);
+};
 
-#endif // HttpResponseGenerator
+#endif  // HttpResponseGenerator

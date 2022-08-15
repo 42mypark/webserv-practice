@@ -5,6 +5,7 @@
 
 #include "EventInfo.hpp"
 #include "HttpRequestParser.hpp"
+#include "HttpResponseGenerator.hpp"
 #include "Receiver.hpp"
 #include "Sender.hpp"
 
@@ -13,12 +14,21 @@ int main(int argc, char **argv) {
     std::cout << "plz input only port!" << std::endl;
     return 1;
   }
-  HttpRequestParser hrp;
-  int               kq        = kqueue();
-  int               listen_fd = socket(AF_INET, SOCK_STREAM, 0);
+
+  int                      kq        = kqueue();
+  int                      listen_fd = socket(AF_INET, SOCK_STREAM, 0);
+  Parser                   parser;
+  ResponseGenerator        generator;
+  std::vector<EventInfo *> event_list;  // iter -> free
+  HttpResponseGenerator    hrg;
+  CgiResponseParser        crp;
+  CgiToHttpTransformer     ctht;
+  Sender                   sender(kq, &crp, &ctht);
+  HttpRequestParser        hrp(&sender);
+  Receiver                 receiver(kq, listen_fd, &hrp, &hrg);
 
   fcntl(listen_fd, F_SETFL, O_NONBLOCK);
-  EventInfo    *event_info = new EventInfo(-1, listen_fd, &hrp);
+  EventInfo    *event_info = new EventInfo(-1, listen_fd, &hrp, &hrg);
   struct kevent ev;
   EV_SET(&ev, listen_fd, EVFILT_READ, EV_ADD, 0, 0, event_info);
   kevent(kq, &ev, 1, NULL, 0, NULL);  // ERROR CHECK
@@ -39,13 +49,10 @@ int main(int argc, char **argv) {
   }
   std::cout << "Server: listening.." << std::endl;
 
-  Receiver                 receiver(kq, listen_fd, &hrp);
-  Sender                   sender(kq);
-  Paser                    parser();
-  std::vector<EventInfo *> event_list;  // iter -> free
   while (1) {
     receiver.listen(event_list);
     parser.parse(event_list);
+    // generator.response(event_list);
     sender.sendClient(event_list);
     event_list.clear();
   }

@@ -1,8 +1,10 @@
 #if !defined(ResponseMaterial_hpp)
 #define ResponseMaterial_hpp
 
-class ResponseMaterial {};
+class ResponseMaterial {
+  // Destructor
+ public:
+  virtual ~ResponseMaterial() {}
+};
 
-
-#endif // ResponseMaterial
-
+#endif  // ResponseMaterial
