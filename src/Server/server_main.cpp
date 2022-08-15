@@ -18,7 +18,7 @@ int main(int argc, char **argv) {
   int               listen_fd = socket(AF_INET, SOCK_STREAM, 0);
 
   fcntl(listen_fd, F_SETFL, O_NONBLOCK);
-  EventInfo *   event_info = new EventInfo(-1, listen_fd, &hrp);
+  EventInfo    *event_info = new EventInfo(-1, listen_fd, &hrp);
   struct kevent ev;
   EV_SET(&ev, listen_fd, EVFILT_READ, EV_ADD, 0, 0, event_info);
   kevent(kq, &ev, 1, NULL, 0, NULL);  // ERROR CHECK
@@ -41,11 +41,12 @@ int main(int argc, char **argv) {
 
   Receiver                 receiver(kq, listen_fd, &hrp);
   Sender                   sender(kq);
-  std::vector<EventInfo *> event_list; // iter -> free
-  std::vector<ResponseMaterial *> material_list; // iter -> free
-  std::vector<HttpResponse *> response_list; // iter -> free
+  Paser                    parser();
+  std::vector<EventInfo *> event_list;  // iter -> free
   while (1) {
     receiver.listen(event_list);
+    parser.parse(event_list);
     sender.sendClient(event_list);
+    event_list.clear();
   }
 }

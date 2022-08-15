@@ -7,8 +7,8 @@ void Sender::sendClient(std::vector<EventInfo*>& event_list) {
     EventInfo&  event_info = **it;
     std::string to_send;
     event_info.storage() >> to_send;
-    std::cout << "Server: send to client: '" << to_send
-              << "' length: " << to_send.length() << std::endl;
+    std::cout << "Server: send to client: '" << to_send << "' length: " << to_send.length()
+              << std::endl;
     send(event_info.toFd(), to_send.c_str(), to_send.length(), 0);
   }
 }

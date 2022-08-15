@@ -31,19 +31,17 @@ int main(int argc, char **argv) {
   std::cout << "Client: connected!" << std::endl;
 
   std::string line;
-  char        buffer[BUFFER_SIZE*100];
-  // while (1) {
-    bzero(buffer, BUFFER_SIZE*100);
-    // std::cout << "input : ";
-    // std::getline(std::cin, line);
-    line = "GET / HTTP/1.1\r\n\r\n";
-    std::cout << "Client: send to server: '" << line
-              << "' length: " << line.length() << std::endl;
+  char        buffer[BUFFER_SIZE * 100];
+  while (1) {
+    bzero(buffer, BUFFER_SIZE * 100);
+    std::cout << "input : ";
+    std::getline(std::cin, line);
+    // line = "GET / HTTP/1.1\r\n\r\n";
+    std::cout << "Client: send to server: '" << line << "' length: " << line.length() << std::endl;
     send(client_fd, line.c_str(), line.length(), 0);
-    recv(client_fd, buffer, BUFFER_SIZE*100, 0);
-    write(1, "Client: receive from server: ",
-          strlen("Client: receive from server: "));
-    write(1, buffer, BUFFER_SIZE*100);
+    recv(client_fd, buffer, BUFFER_SIZE * 100, 0);
+    write(1, "Client: receive from server: ", strlen("Client: receive from server: "));
+    write(1, buffer, BUFFER_SIZE * 100);
     write(1, "\n", 1);
-  // }
+  }
 }

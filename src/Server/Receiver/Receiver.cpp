@@ -13,8 +13,7 @@ void Receiver::_acceptEvent() {
   bzero(&client_addr, sizeof(client_addr));
   socklen_t addr_len = sizeof(client_addr);
 
-  int client_fd =
-      accept(_listen_fd, SOCKADDR(client_addr), &addr_len);  // ERROR CHECK
+  int client_fd = accept(_listen_fd, SOCKADDR(client_addr), &addr_len);  // ERROR CHECK
   fcntl(client_fd, F_SETFL, O_NONBLOCK);
   EventInfo*    event_info = new EventInfo(client_fd, client_fd, _hrp);
   struct kevent ev;
@@ -29,14 +28,13 @@ void Receiver::_deleteEvent(struct kevent* ev, EventInfo& event_info) {
   std::cout << "Server: connection destroyed" << std::endl;
 }
 
-void Receiver::_readEvent(std::vector<EventInfo*>& event_list,
-                          EventInfo&               event_info) {
+void Receiver::_readEvent(std::vector<EventInfo*>& event_list, EventInfo& event_info) {
   char buffer[BUFFER_SIZE];
   int  receive_size;
   bzero(buffer, BUFFER_SIZE);
   receive_size = recv(event_info.fromFd(), buffer, BUFFER_SIZE - 1, 0);
-  std::cout << "Server: receive from client: '" << buffer
-            << "' length: " << strlen(buffer) << std::endl;
+  std::cout << "Server: receive from client: '" << buffer << "' length: " << strlen(buffer)
+            << std::endl;
   if (event_info.storage().eof()) {
     std::cout << "Server: storage eof error" << std::endl;
     event_info.storage().clear();
@@ -48,8 +46,7 @@ void Receiver::_readEvent(std::vector<EventInfo*>& event_list,
 // Interface
 void Receiver::listen(std::vector<EventInfo*>& event_list) {
   struct kevent active_event[MAX_EVENT];
-  int           invoked =
-      kevent(_kq, NULL, 0, active_event, MAX_EVENT, &_wait);  // ERROR CHECK
+  int           invoked = kevent(_kq, NULL, 0, active_event, MAX_EVENT, &_wait);  // ERROR CHECK
 
   for (int i = 0; i < invoked; ++i) {
     int        event      = active_event[i].filter;

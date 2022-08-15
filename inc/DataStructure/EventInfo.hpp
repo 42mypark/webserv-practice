@@ -17,8 +17,8 @@ class EventInfo {
   ResponseMaterial*  _response_material;
 
  public:
-  EventInfo(int to_fd, int from_fd, Parser* p)
-      : _to_fd(to_fd), _from_fd(from_fd), _empty_line(false), _p(p) {}
+  EventInfo(int to_fd, int from_fd, Parser* p, ResponseGenerator* rg)
+      : _to_fd(to_fd), _from_fd(from_fd), _empty_line(false), _parser(p), _response_generator(rg), _response_material(NULL) {}
   const int           toFd() const { return _to_fd; }
   int&                fromFd() const { return _from_fd; }
   bool&               emptyLine() const { return _empty_line; }
