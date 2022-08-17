@@ -6,8 +6,13 @@
 #include "EventInfo.hpp"
 #include "HttpRequestParser.hpp"
 #include "HttpResponseGenerator.hpp"
+#include "Log.hpp"
 #include "Receiver.hpp"
 #include "Sender.hpp"
+
+namespace ft {
+extern Log logger;
+}  // namespace ft
 
 int main(int argc, char **argv) {
   if (argc != 2) {
@@ -17,9 +22,9 @@ int main(int argc, char **argv) {
 
   int                      kq        = kqueue();
   int                      listen_fd = socket(AF_INET, SOCK_STREAM, 0);
-  Parser                   parser;
   ResponseGenerator        generator;
   std::vector<EventInfo *> event_list;  // iter -> free
+  Parser                   parser;
   HttpResponseGenerator    hrg;
   CgiResponseParser        crp;
   CgiToHttpTransformer     ctht;
@@ -40,20 +45,17 @@ int main(int argc, char **argv) {
   server_addr.sin_addr.s_addr = INADDR_ANY;
 
   int ret;
-  ret = bind(listen_fd, SOCKADDR(server_addr), sizeof(server_addr));
-  ret = listen(listen_fd, BACKLOG);
 
-  if (ret == -1) {
-    std::cout << "Server: bind or listen error" << std::endl;
-    return 1;
-  }
-  std::cout << "Server: listening.." << std::endl;
+  ft::logger(bind(listen_fd, SOCKADDR(server_addr), sizeof(server_addr)), "main: bind: ");
+  ft::logger(listen(listen_fd, BACKLOG), "main: listen: ");
+  ft::logger << "Server: listening.." << std::endl;
 
   while (1) {
     receiver.listen(event_list);
     parser.parse(event_list);
-    // generator.response(event_list);
+    generator.response(event_list);
     sender.sendClient(event_list);
     event_list.clear();
+    ft::logger << "Server: Event list clear" << std::endl;
   }
 }

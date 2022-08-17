@@ -15,6 +15,7 @@
 #include "EventInfo.hpp"
 #include "HttpRequestParser.hpp"
 #include "HttpResponseGenerator.hpp"
+#include "Log.hpp"
 #include "macro.hpp"
 
 class Receiver {

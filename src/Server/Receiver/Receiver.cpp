@@ -1,5 +1,7 @@
 #include "Receiver.hpp"
 
+#include <errno.h>
+
 // Constructor
 Receiver::Receiver(int kq, int listen_fd, HttpRequestParser* hrp, HttpResponseGenerator* hrg)
     : _kq(kq), _listen_fd(listen_fd), _hrp(hrp), _hrg(hrg) {
@@ -13,19 +15,23 @@ void Receiver::_acceptEvent() {
   bzero(&client_addr, sizeof(client_addr));
   socklen_t addr_len = sizeof(client_addr);
 
-  int client_fd = accept(_listen_fd, SOCKADDR(client_addr), &addr_len);  // ERROR CHECK
+  int client_fd = ft::logger(accept(_listen_fd, SOCKADDR(client_addr), &addr_len),
+                             "Receiver: _acceptEvent: accept:");
   fcntl(client_fd, F_SETFL, O_NONBLOCK);
   EventInfo*    event_info = new EventInfo(client_fd, client_fd, _hrp, _hrg);
   struct kevent ev;
   EV_SET(&ev, client_fd, EVFILT_READ, EV_ADD, 0, 0, event_info);
   kevent(_kq, &ev, 1, NULL, 0, NULL);  // ERROR CHECK
+  ft::logger(ev, "Receiver: _acceptEvent:");
+  ft::logger << "Receiver: _acceptEvent: connection established with fd " << client_fd << std::endl;
 }
 
 void Receiver::_deleteEvent(struct kevent* ev, EventInfo& event_info) {
-  EV_SET(ev, event_info.toFd(), EVFILT_READ, EV_DELETE, 0, 0, NULL);
-  kevent(_kq, ev, 1, NULL, 0, NULL);  // ERROR CHECK
+  EV_SET(ev, event_info.fromFd(), EVFILT_READ, EV_DELETE, 0, 0, NULL);
+  ft::logger(*ev, "Receiver: _deleteEvent:");
+  ft::logger(kevent(_kq, ev, 1, NULL, 0, NULL), "Receiver: _deleteEvent: kevent:");
   delete &event_info;
-  std::cout << "Server: connection destroyed" << std::endl;
+  ft::logger << "Server: connection destroyed" << std::endl;
 }
 
 void Receiver::_readEvent(std::vector<EventInfo*>& event_list, EventInfo& event_info) {
@@ -33,10 +39,10 @@ void Receiver::_readEvent(std::vector<EventInfo*>& event_list, EventInfo& event_
   int  receive_size;
   bzero(buffer, BUFFER_SIZE);
   receive_size = recv(event_info.fromFd(), buffer, BUFFER_SIZE - 1, 0);
-  std::cout << "Server: receive from client: '" << buffer << "' length: " << strlen(buffer)
-            << std::endl;
+  ft::logger << "Receiver: _readEvent: receive from client: '" << buffer
+             << "' length: " << strlen(buffer) << std::endl;
   if (event_info.storage().eof()) {
-    std::cout << "Server: storage eof error" << std::endl;
+    ft::logger << "Receiver: _readEvent: EventInfo: storage eof error" << std::endl;
     event_info.storage().clear();
   }
   event_info.storage() << buffer;
@@ -46,7 +52,8 @@ void Receiver::_readEvent(std::vector<EventInfo*>& event_list, EventInfo& event_
 // Interface
 void Receiver::listen(std::vector<EventInfo*>& event_list) {
   struct kevent active_event[MAX_EVENT];
-  int           invoked = kevent(_kq, NULL, 0, active_event, MAX_EVENT, &_wait);  // ERROR CHECK
+  int           invoked =
+      ft::logger(kevent(_kq, NULL, 0, active_event, MAX_EVENT, &_wait), "Receiver: listen:");
 
   for (int i = 0; i < invoked; ++i) {
     int        event      = active_event[i].filter;
@@ -57,7 +64,6 @@ void Receiver::listen(std::vector<EventInfo*>& event_list) {
     } else if (event == EVFILT_READ) {
       if (event_info.fromFd() == _listen_fd) {
         _acceptEvent();
-        std::cout << "Server: connection established" << std::endl;
       } else {
         _readEvent(event_list, event_info);
       }

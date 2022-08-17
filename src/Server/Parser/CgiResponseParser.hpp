@@ -1,7 +1,12 @@
 #if !defined(CgiResponsePaser_hpp)
 #define CgiResponsePaser_hpp
 
+#include "Log.hpp"
 #include "Parser.hpp"
+
+namespace ft {
+extern Log logger;
+}  // namespace ft
 
 class CgiResponseParser : public Parser {
   // Member Variable

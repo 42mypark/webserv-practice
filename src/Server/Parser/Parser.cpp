@@ -16,7 +16,7 @@ void Parser::parse(std::vector<EventInfo*>& event_list) {
     Parser&    actual_parser = *(event_info.parser());
     actual_parser.parse(event_info);
     if (actual_parser.isEnd() && actual_parser.isCgi()) {
-      _sender->callCgi(event_info);
+      actual_parser._sender->callCgi(event_info);
       _eraseElementOnIter(it, event_list);
     } else if (actual_parser.isEnd() == false) {
       _eraseElementOnIter(it, event_list);

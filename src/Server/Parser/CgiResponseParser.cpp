@@ -16,10 +16,8 @@ void CgiResponseParser::parse(EventInfo& event_info) {
 
 bool CgiResponseParser::isEnd() {
   int ws;
-  int ret = waitpid(_pid, &ws, WNOHANG);  // cgi fail?
-  if (ret == -1) {
-    std::cout << "Server: CGI Execution Error: waitpid" << std::endl;  // log
-  } else if (ret == 0) {
+  int ret = ft::logger(waitpid(_pid, &ws, WNOHANG), "CgiResponseParser: waitpid:");  // cgi fail?
+  if (ret == 0) {
     return false;
   }
   return true;

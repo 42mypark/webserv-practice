@@ -14,13 +14,15 @@ SERVER_SRC =	server_main.cpp \
 							CgiResponseParser.cpp \
 							CgiToHttpTransformer.cpp \
 							HttpResponseGenerator.cpp \
-							ResponseGenerator.cpp
+							ResponseGenerator.cpp \
+							Log.cpp
 
 SERVER_OBJ = $(addprefix $(OBJ_DIR)/, $(SERVER_SRC:.cpp=.o))
 
 VPATH = $(shell ls -R)
 
 INC_DIRS =	-I$(SRC_DIR)/$(SERVER_DIR)/Sender\
+			-I$(SRC_DIR)/Log\
 			-I$(SRC_DIR)/$(SERVER_DIR)/Receiver\
 			-I$(SRC_DIR)/$(SERVER_DIR)/Parser\
 			-I$(SRC_DIR)/$(SERVER_DIR)/ResponseGenerator\

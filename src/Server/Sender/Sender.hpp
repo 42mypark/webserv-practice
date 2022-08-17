@@ -16,6 +16,10 @@
 #include "CgiToHttpTransformer.hpp"
 #include "EventInfo.hpp"
 
+namespace ft {
+extern Log logger;
+}  // namespace ft
+
 class Sender {
  private:
   int                   _kq;
@@ -24,7 +28,8 @@ class Sender {
 
   // Constructor
  public:
-  Sender(int kq, CgiResponseParser* crp, CgiToHttpTransformer* ctht) : _kq(kq), _crp(crp), _ctht(ctht) {}
+  Sender(int kq, CgiResponseParser* crp, CgiToHttpTransformer* ctht)
+      : _kq(kq), _crp(crp), _ctht(ctht) {}
 
   // Method
  private:

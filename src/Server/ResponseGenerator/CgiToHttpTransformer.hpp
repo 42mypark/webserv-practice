@@ -2,6 +2,11 @@
 #define CgiToHttpTransformer_hpp
 
 #include "ResponseGenerator.hpp"
+#include "Log.hpp"
+
+namespace ft {
+extern Log logger;
+}  // namespace ft
 
 class EventInfo;
 
